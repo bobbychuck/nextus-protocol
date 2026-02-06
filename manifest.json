@@ -1,0 +1,114 @@
+{
+    "name": "nextus",
+    "version": "1.0.0",
+    "description": "Multi-agent task orchestration system",
+    "agents": [
+        {
+            "id": "logistics",
+            "name": "Logistics Agent",
+            "description": "Handles shipping, inventory, and fulfillment operations",
+            "actions": [
+                "ship",
+                "inventory",
+                "fulfill",
+                "track"
+            ],
+            "rules": {
+                "requiresAuth": false,
+                "allowedDataTypes": [
+                    "object",
+                    "array",
+                    "string"
+                ],
+                "maxPayloadSize": "1MB",
+                "retryOnFailure": true,
+                "maxRetries": 3
+            },
+            "limits": {
+                "rateLimit": 100,
+                "rateLimitWindow": "1m",
+                "maxConcurrent": 10,
+                "timeout": 30000,
+                "priority": 2
+            }
+        },
+        {
+            "id": "search",
+            "name": "Search Agent",
+            "description": "Handles search, query, and lookup operations",
+            "actions": [
+                "search",
+                "query",
+                "lookup",
+                "find"
+            ],
+            "rules": {
+                "requiresAuth": false,
+                "allowedDataTypes": [
+                    "object",
+                    "string"
+                ],
+                "maxPayloadSize": "512KB",
+                "retryOnFailure": true,
+                "maxRetries": 2
+            },
+            "limits": {
+                "rateLimit": 200,
+                "rateLimitWindow": "1m",
+                "maxConcurrent": 50,
+                "timeout": 10000,
+                "priority": 1
+            }
+        },
+        {
+            "id": "human",
+            "name": "Human Agent",
+            "description": "Handles tasks requiring human review and approval",
+            "actions": [
+                "review",
+                "approve",
+                "escalate",
+                "manual",
+                "human"
+            ],
+            "rules": {
+                "requiresAuth": true,
+                "allowedDataTypes": [
+                    "object",
+                    "array",
+                    "string"
+                ],
+                "maxPayloadSize": "5MB",
+                "retryOnFailure": false,
+                "maxRetries": 0
+            },
+            "limits": {
+                "rateLimit": 20,
+                "rateLimitWindow": "1m",
+                "maxConcurrent": 5,
+                "timeout": 300000,
+                "priority": 3
+            }
+        }
+    ],
+    "server": {
+        "port": 3000,
+        "endpoints": {
+            "handshake": "POST /next",
+            "manifest": "GET /manifest",
+            "websocket": "ws://localhost:3000"
+        }
+    },
+    "socketEvents": {
+        "incoming": [
+            "connection",
+            "disconnect"
+        ],
+        "outgoing": [
+            "welcome",
+            "agent:result",
+            "agent:error",
+            "agent:unhandled"
+        ]
+    }
+}
